@@ -13,7 +13,7 @@ public class GamePanel extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(800, 600));
         setBackground(Color.BLACK);
         
-        player = new Player(100, 400); // Initial position
+        player = new Player(100, 400, this); // Pass this (the GamePanel) to the Player constructor
         opponent = new Opponent(500, 400); // Initial position
         background = new Background("res/images/background/street.png");
         
@@ -26,9 +26,9 @@ public class GamePanel extends JPanel implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        player.update();
+        player.update(); // Now the player updates itself and can access the opponent
         opponent.update();
-        checkCollisions();
+        checkCollisions(); // Check for collision between player and opponent
         repaint();
     }
     
@@ -38,10 +38,20 @@ public class GamePanel extends JPanel implements ActionListener {
         background.draw(g);
         player.draw(g);
         opponent.draw(g);
+
+        // Draw the player's powers
+        for (Power power : player.getPowers()) {
+            power.draw(g);
+        }
     }
     
     private void checkCollisions() {
-        // Simple collision check for punches
+        // Check for power collision with the opponent
+        for (Power power : player.getPowers()) {
+            power.checkCollision(opponent); // Pass the opponent object directly
+        }
+
+        // Simple collision check for punches (existing)
         if (player.getHealth() > 0 && player.isPunching() && player.getX() + 50 > opponent.getX() && player.getX() < opponent.getX() + 50) {
             opponent.takeDamage(10); // Deal 10 damage
         }
@@ -50,5 +60,10 @@ public class GamePanel extends JPanel implements ActionListener {
         if (opponent.getHealth() > 0 && opponent.getX() + 50 > player.getX() && opponent.getX() < player.getX() + 50) {
             player.takeDamage(10); // Opponent deals 10 damage
         }
+    }
+
+    // Getter for opponent (needed in Player.java for power collision check)
+    public Opponent getOpponent() {
+        return opponent;
     }
 }

@@ -18,6 +18,9 @@ public class KeyboardInput implements KeyListener {
             player.moveRight();
         } else if (key == KeyEvent.VK_A) { // A key for punch
             player.punch();
+            player.shootPower();
+        } else if (key == KeyEvent.VK_S) { // S key for shooting power
+            player.shootPower();
         }
     }
     
